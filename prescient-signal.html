@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prescient Global Insights — What do your customers know that you don't?</title>
+<meta name="description" content="Prescient Global Insights designs, scripts and programs custom quantitative surveys, delivering insights that help businesses unlock solutions to hard problems. Miami, FL.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..700&family=Newsreader:ital,opsz,wght@1,6..72,400&display=swap">
+<style>
+/* ------------------------------------------------------------------
+   Tokens. Overwrite --violet and --signal with values sampled from the
+   logo file; everything else on the page is derived from them.
+   ------------------------------------------------------------------ */
+:root{
+  --violet-deep:#3B1A6B;
+  --violet:#5B2D91;
+  --signal:#F5811E;
+  --ink:#171717;
+  --paper:#FBFAF8;
+  --rule:#D8D2E4;
+  --night:#1B0B36;          /* particle ground; orange reaches 7:1 here   */
+  --lilac:#C9B8E8;          /* secondary text on night, 10:1              */
+  --lilac-muted:#B9A9D6;    /* tertiary text on night, 8.5:1              */
+  --ink-muted:#5E5566;      /* secondary text on paper, 6.8:1             */
+
+  --font-ui:"Archivo",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --font-voice:"Newsreader",Georgia,"Times New Roman",serif;
+
+  --step-display:clamp(2.6rem,6.2vw,5.4rem);
+  --step-h1:clamp(2rem,4vw,3.2rem);
+  --step-h2:clamp(1.35rem,2.2vw,1.75rem);
+  --step-body:1.0625rem;
+  --step-small:0.875rem;
+
+  --gutter:clamp(1.25rem,5vw,4.5rem);
+  --measure:62ch;
+
+  /* spine timing, read by JS */
+  --spine-hold:100;   /* vh a state is held, legible  */
+  --spine-morph:70;   /* vh spent morphing to the next */
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;
+  background:var(--night);
+  color:var(--paper);
+  font-family:var(--font-ui);
+  font-size:var(--step-body);
+  line-height:1.5;
+  font-variant-numeric:tabular-nums lining-nums;
+  font-feature-settings:"tnum" 1,"lnum" 1;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,p,ul,ol,dl,dd,figure{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:0.18em}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:2px}
+.paper :focus-visible{outline-color:var(--violet)}
+.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ------------------------------------------------------------------ */
+/* Signal: the one bold element. Fixed behind everything.              */
+/* ------------------------------------------------------------------ */
+#signal{position:fixed;inset:0;z-index:0;pointer-events:none}
+#signal canvas{display:block;width:100%;height:100%}
+#signal-static{position:absolute;top:4rem;right:var(--gutter);bottom:0;width:46%;pointer-events:none;display:none}
+#signal-static svg{width:100%;height:100%;display:block}
+@media (max-width:760px){#signal-static{top:auto;left:0;right:0;width:100%;height:18%;padding-inline:var(--gutter)}}
+html.no-signal #signal{display:none}
+html.no-signal #signal-static{display:block}
+
+main{position:relative;z-index:1}
+section{position:relative}
+.wrap{max-width:74rem;margin-inline:auto;padding-inline:var(--gutter)}
+
+/* ------------------------------------------------------------------ */
+/* Header                                                              */
+/* ------------------------------------------------------------------ */
+.site-head{
+  position:fixed;inset:0 0 auto 0;z-index:5;
+  background:color-mix(in srgb,var(--night) 88%,transparent);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid color-mix(in srgb,var(--violet) 55%,transparent);
+}
+@supports not (background:color-mix(in srgb,#000 50%,transparent)){
+  .site-head{background:rgba(27,11,54,.92)}
+}
+.site-head .wrap{display:flex;align-items:center;gap:1.5rem;height:4rem}
+.brand{display:inline-flex;align-items:center;gap:.6rem;text-decoration:none;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.brand .mark{width:1.15rem;height:1.15rem;flex:none}
+.brand .mark .v{fill:var(--violet)}
+.brand .mark .s{fill:var(--signal)}
+.brand small{font-weight:400;color:var(--lilac);font-size:var(--step-small)}
+.site-nav{margin-left:auto;display:flex;gap:1.75rem;font-size:.95rem}
+.site-nav a{text-decoration:none;color:var(--lilac)}
+.site-nav a:hover{color:var(--paper)}
+.head-cta{margin-left:1rem}
+.btn{
+  display:inline-block;padding:.75rem 1.25rem;border-radius:3px;
+  background:var(--signal);color:var(--ink);font-weight:600;text-decoration:none;
+  border:1px solid transparent;line-height:1.2
+}
+.btn:hover{background:#FF9640}
+.btn.small{padding:.55rem .95rem;font-size:.9rem}
+.menu{display:none}
+@media (max-width:760px){
+  .site-nav,.head-cta{display:none}
+  .menu{display:block;margin-left:auto;position:relative}
+  .menu summary{list-style:none;cursor:pointer;padding:.5rem .75rem;border:1px solid var(--violet);border-radius:3px;font-size:.9rem;color:var(--lilac)}
+  .menu summary::-webkit-details-marker{display:none}
+  .menu[open] summary{color:var(--paper)}
+  .menu ul{position:absolute;right:0;top:calc(100% + .5rem);min-width:12rem;background:var(--night);border:1px solid var(--violet);border-radius:3px;padding:.5rem 0}
+  .menu li a{display:block;padding:.6rem 1rem;text-decoration:none;color:var(--lilac)}
+  .menu li a:hover{color:var(--paper)}
+  .menu li.cta{padding:.5rem 1rem}
+}
+
+/* ------------------------------------------------------------------ */
+/* Hero                                                                */
+/* ------------------------------------------------------------------ */
+.hero{min-height:100svh;display:flex;align-items:center;padding-top:4rem;position:relative}
+.hero .wrap{width:100%;position:relative;z-index:1}
+.hero h1{
+  font-size:var(--step-display);font-weight:600;line-height:1.02;letter-spacing:-.025em;
+  max-width:13ch;text-wrap:balance
+}
+.hero p{margin-top:1.5rem;max-width:var(--measure);font-size:clamp(1.05rem,1.4vw,1.25rem);color:var(--lilac)}
+.hero .btn{margin-top:2.25rem}
+
+/* ------------------------------------------------------------------ */
+/* Proof bar                                                           */
+/* ------------------------------------------------------------------ */
+.proof{padding-block:2.5rem}
+.proof ul{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;border-top:1px solid color-mix(in srgb,var(--violet) 70%,transparent);padding-top:2rem}
+@supports not (background:color-mix(in srgb,#000 50%,transparent)){.proof ul{border-top-color:#4a2a78}}
+.proof li{display:flex;flex-direction:column;gap:.25rem}
+.proof strong{font-size:clamp(1.75rem,3vw,2.5rem);font-weight:600;letter-spacing:-.02em;line-height:1}
+.proof span{color:var(--lilac);font-size:var(--step-small)}
+@media (max-width:760px){.proof ul{grid-template-columns:1fr 1fr;gap:1.5rem 1rem}}
+
+/* ------------------------------------------------------------------ */
+/* The four-step spine                                                 */
+/* ------------------------------------------------------------------ */
+.spine{height:calc(4 * (var(--spine-hold) + var(--spine-morph)) * 1vh + 100vh)}
+.spine .stage{position:sticky;top:0;height:100vh;height:100svh}
+.spine .stage .wrap{height:100%;position:relative}
+.spine .steps{position:absolute;inset:0;padding-inline:inherit}
+.step{
+  position:absolute;left:var(--gutter);right:var(--gutter);top:50%;transform:translateY(-50%);
+  width:min(30rem,34%);
+  opacity:0;transition:opacity .45s ease;pointer-events:none
+}
+.step.is-active{opacity:1;pointer-events:auto}
+.step .n{display:block;color:var(--signal);font-size:var(--step-small);font-weight:600;letter-spacing:.02em;margin-bottom:.9rem}
+.step h2{font-size:var(--step-h1);font-weight:600;letter-spacing:-.02em;line-height:1.08;margin-bottom:1rem}
+.step p{color:var(--lilac);max-width:38ch}
+.step .detail{margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--violet);color:var(--paper);font-size:var(--step-small)}
+.spine-title{position:absolute;top:5.5rem;left:var(--gutter);color:var(--lilac-muted);font-size:var(--step-small)}
+.spine-progress{position:absolute;bottom:2rem;left:var(--gutter);display:flex;gap:.5rem}
+.spine-progress i{display:block;width:2rem;height:2px;background:var(--violet)}
+.spine-progress i.on{background:var(--signal)}
+
+@media (max-width:760px){
+  .step{width:auto;top:auto;bottom:4.5rem;transform:none;left:var(--gutter);right:var(--gutter);padding-top:1rem}
+  .step p{max-width:none}
+  .spine .stage::after{
+    content:"";position:absolute;inset:auto 0 0 0;height:60%;
+    background:linear-gradient(to top,var(--night) 55%,transparent);z-index:-1;pointer-events:none
+  }
+}
+
+/* Reduced motion / no WebGL: the spine flows as ordinary content.    */
+html.no-signal .spine{height:auto;padding-block:5rem 3rem}
+html.no-signal .spine .stage{position:static;height:auto}
+html.no-signal .spine .stage .wrap{height:auto}
+html.no-signal .spine .steps{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(24rem,1fr));gap:3rem 3rem;padding:0}
+html.no-signal .step{position:static;transform:none;width:auto;opacity:1;pointer-events:auto}
+html.no-signal .spine-title{position:static;margin-bottom:2rem;display:block}
+html.no-signal .spine-progress{display:none}
+html.no-signal .spine .stage::after{display:none}
+
+/* ------------------------------------------------------------------ */
+/* Light register                                                      */
+/* ------------------------------------------------------------------ */
+.paper{background:var(--paper);color:var(--ink)}
+.paper h2{font-size:var(--step-h1);font-weight:600;letter-spacing:-.02em;line-height:1.1;max-width:20ch;text-wrap:balance}
+.paper h3{font-size:var(--step-h2);font-weight:600;letter-spacing:-.01em;line-height:1.2}
+.paper p{max-width:var(--measure)}
+.paper .lede{color:var(--ink-muted);margin-top:1rem;font-size:1.1rem}
+.section-pad{padding-block:clamp(4rem,9vw,7.5rem)}
+.section-rule{border-top:1px solid var(--rule)}
+
+/* Solutions: vertical tablist + one panel */
+.solutions .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:3rem;margin-top:3rem}
+.sol-list{border-top:1px solid var(--rule)}
+.sol-list button{
+  display:flex;align-items:baseline;justify-content:space-between;width:100%;text-align:left;
+  padding:1rem 0;border-bottom:1px solid var(--rule);font-size:1.1rem;font-weight:500;color:var(--ink-muted)
+}
+.sol-list button[aria-selected="true"]{color:var(--ink);font-weight:600}
+.sol-list button[aria-selected="true"]::after{content:"";width:.5rem;height:.5rem;border-radius:50%;background:var(--signal);flex:none;align-self:center}
+.sol-list button:hover{color:var(--ink)}
+.sol-panel{border-top:1px solid var(--rule);padding-top:1rem}
+.sol-panel[hidden]{display:none}
+.sol-panel h3{margin-bottom:1.25rem}
+.sol-panel dl{display:grid;grid-template-columns:9rem 1fr;gap:1rem 1.5rem}
+.sol-panel dt{color:var(--ink-muted);font-size:var(--step-small);padding-top:.15rem}
+.sol-panel dd p{max-width:52ch}
+@media (max-width:760px){
+  .solutions .grid{grid-template-columns:1fr;gap:2rem}
+  .sol-panel dl{grid-template-columns:1fr;gap:.5rem 0}
+  .sol-panel dt{padding-top:0}
+  .sol-panel dd + dt{margin-top:1rem}
+}
+
+/* Data quality: definition rows */
+.quality dl{margin-top:3rem;border-top:1px solid var(--rule)}
+.quality .row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:1rem 2rem;padding:1.5rem 0;border-bottom:1px solid var(--rule)}
+.quality dt{font-weight:600;font-size:1.1rem}
+.quality dd p + p{margin-top:.75rem}
+.quality dd{color:var(--ink);max-width:60ch}
+@media (max-width:760px){.quality .row{grid-template-columns:1fr;gap:.5rem}}
+
+/* Case study */
+.study .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2.5rem;margin-top:3rem}
+.study .col h3{font-size:var(--step-small);font-weight:600;color:var(--ink-muted);margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid var(--rule)}
+.study .result strong{display:block;font-size:clamp(2.5rem,5vw,4rem);font-weight:600;letter-spacing:-.03em;line-height:1;color:var(--violet);margin:.5rem 0 .75rem}
+.study blockquote{margin:3.5rem 0 0;max-width:38rem}
+.study blockquote p{
+  font-family:var(--font-voice);font-style:italic;font-size:clamp(1.35rem,2.4vw,1.85rem);line-height:1.35;color:var(--ink);max-width:none
+}
+.study blockquote footer{margin-top:.75rem;color:var(--ink-muted);font-size:var(--step-small)}
+.slot{color:var(--ink-muted);border-bottom:1px dashed var(--violet)}
+.study .note{margin-top:2.5rem;font-size:var(--step-small);color:var(--ink-muted);max-width:60ch}
+@media (max-width:760px){.study .cols{grid-template-columns:1fr;gap:2rem}}
+
+/* Industries: three text columns */
+.industries .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2.5rem;margin-top:3rem}
+.industries h3{margin-bottom:.75rem}
+.industries p{color:var(--ink);max-width:36ch}
+.industries ul{margin-top:1.25rem;border-top:1px solid var(--rule)}
+.industries li{padding:.6rem 0;border-bottom:1px solid var(--rule);font-size:var(--step-small);color:var(--ink-muted)}
+@media (max-width:760px){.industries .cols{grid-template-columns:1fr;gap:2.5rem}}
+
+/* Trust layer */
+.trust .cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem 4rem;margin-top:3rem}
+.trust h3{font-size:var(--step-small);font-weight:600;color:var(--ink-muted);padding-bottom:.5rem;border-bottom:1px solid var(--rule);margin-bottom:.75rem}
+.trust .big{font-size:clamp(1.75rem,3vw,2.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.trust p{max-width:44ch}
+.trust p + p{margin-top:.5rem}
+@media (max-width:760px){.trust .cols{grid-template-columns:1fr}}
+
+/* ------------------------------------------------------------------ */
+/* Contact                                                             */
+/* ------------------------------------------------------------------ */
+.contact{min-height:200vh}
+html.no-signal .contact{min-height:0}
+.contact .stage{position:sticky;top:0;min-height:100vh;min-height:100svh;display:flex;align-items:center;padding-block:5rem}
+html.no-signal .contact .stage{position:static}
+.contact h2{font-size:var(--step-h1);font-weight:600;letter-spacing:-.02em;line-height:1.08;max-width:16ch}
+.contact .lede{color:var(--lilac);margin-top:1rem;max-width:var(--measure)}
+.contact .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:3rem;align-items:start}
+.contact form{display:grid;gap:1.1rem}
+.field{display:grid;gap:.4rem}
+.field label{font-size:var(--step-small);color:var(--lilac)}
+.field input,.field textarea{
+  width:100%;padding:.8rem .9rem;border-radius:3px;
+  background:color-mix(in srgb,var(--violet) 22%,transparent);
+  border:1px solid var(--violet);color:var(--paper);font:inherit
+}
+@supports not (background:color-mix(in srgb,#000 50%,transparent)){.field input,.field textarea{background:#2b1650}}
+.field textarea{min-height:7.5rem;resize:vertical}
+.field input:focus-visible,.field textarea:focus-visible{outline-offset:2px}
+.contact .btn{justify-self:start;margin-top:.5rem}
+.form-status{color:var(--lilac);font-size:var(--step-small);min-height:1.5em}
+.contact address{font-style:normal;color:var(--lilac);margin-top:2rem;font-size:var(--step-small)}
+@media (max-width:760px){.contact .grid{grid-template-columns:1fr;gap:2rem}}
+
+.site-foot{padding:2rem 0 2.5rem;font-size:var(--step-small);color:var(--lilac-muted);border-top:1px solid var(--violet)}
+.site-foot .wrap{display:flex;flex-wrap:wrap;gap:.5rem 2rem}
+</style>
+</head>
+<body>
+
+<!-- Signal: WebGL particle field. Replaced by #signal-static when
+     prefers-reduced-motion is set or WebGL is unavailable. -->
+<div id="signal" aria-hidden="true"></div>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Prescient Global Insights, home">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect class="v" x="2" y="2" width="20" height="20" rx="4"/><circle class="s" cx="15.5" cy="8.5" r="3.5"/></svg>
+      Prescient <small>Global Insights</small>
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#process">Process</a>
+      <a href="#solutions">Solutions</a>
+      <a href="#quality">Data quality</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="btn small head-cta" href="#contact">Brief us on your problem</a>
+    <details class="menu">
+      <summary>Menu</summary>
+      <ul>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#solutions">Solutions</a></li>
+        <li><a href="#quality">Data quality</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li class="cta"><a class="btn small" href="#contact">Brief us on your problem</a></li>
+      </ul>
+    </details>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- 1. Hero: one headline, one sentence, one button. -->
+  <section class="hero" aria-labelledby="hero-h">
+    <div id="signal-static" aria-hidden="true">
+      <!-- Static rendering of the resolved chart (state 5), built from dots.
+           Shown only when prefers-reduced-motion is set or WebGL is unavailable. -->
+      <svg viewBox="0 0 660 540" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="dots-l" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.4" fill="#C9B8E8" opacity=".85"/></pattern>
+          <pattern id="dots-o" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.5" fill="#F5811E"/></pattern>
+        </defs>
+        <g transform="translate(20 10)">
+          <rect x="0"   y="290" width="90" height="220" fill="url(#dots-l)"/>
+          <rect x="130" y="180" width="90" height="330" fill="url(#dots-l)"/>
+          <rect x="260" y="60"  width="90" height="450" fill="url(#dots-o)"/>
+          <rect x="390" y="230" width="90" height="280" fill="url(#dots-l)"/>
+          <rect x="520" y="330" width="90" height="180" fill="url(#dots-l)"/>
+          <line x1="-20" y1="512" x2="640" y2="512" stroke="#5B2D91" stroke-width="1"/>
+        </g>
+      </svg>
+    </div>
+    <div class="wrap">
+      <h1 id="hero-h">What do your customers know that you don't?</h1>
+      <p>We design, script and program custom surveys to deliver insights that help businesses unlock solutions to hard problems.</p>
+      <a class="btn" href="#contact">Brief us on your problem</a>
+    </div>
+  </section>
+
+  <!-- 2. Proof bar: the four verified figures, nothing else. -->
+  <section class="proof" aria-label="Track record">
+    <div class="wrap">
+      <ul>
+        <li><strong>350+</strong><span>completed projects</span></li>
+        <li><strong>1.5M+</strong><span>respondents surveyed</span></li>
+        <li><strong>24/7</strong><span>client support</span></li>
+        <li><strong>31</strong><span>verified reviews on Clutch</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3. The four-step spine: pinned, particle states 2 to 5. -->
+  <section class="spine" id="process" aria-labelledby="spine-h">
+    <div class="stage">
+      <div class="wrap">
+        <h2 class="spine-title" id="spine-h">How a study runs</h2>
+        <div class="steps">
+          <article class="step is-active" data-step="0">
+            <span class="n">01</span>
+            <h2>Target audience</h2>
+            <p>We partner with panel providers to recruit respondents profiled on self-reported attributes, in whichever markets the decision covers. The sample is defined before a single question is written, so the people answering are the people who matter.</p>
+            <p class="detail">Global panel partners, respondents profiled on self-reported attributes</p>
+          </article>
+          <article class="step" data-step="1">
+            <span class="n">02</span>
+            <h2>Build your survey</h2>
+            <p>We design and script custom surveys and program them on Qualtrics, Decipher or SurveyMonkey. GenAI-powered open-ends probe the why behind behaviour at the scale of a quantitative study, not a focus group.</p>
+            <p class="detail">Programmed on Qualtrics, Decipher or SurveyMonkey</p>
+          </article>
+          <article class="step" data-step="2">
+            <span class="n">03</span>
+            <h2>Uncover insights</h2>
+            <p>Data is scrubbed, open-ends are coded into quantifiable outputs, and cross-tabulations are run across every segment that matters. AI-driven analytics surface the patterns a top-line read would miss.</p>
+            <p class="detail">Open-end coding, cross-tabulation, AI-driven analytics</p>
+          </article>
+          <article class="step" data-step="3">
+            <span class="n">04</span>
+            <h2>Tell your story</h2>
+            <p>KPI scorecards and interactive real-time dashboards put the numbers where your stakeholders already look. An executive-ready summary carries the one finding that changes the decision.</p>
+            <p class="detail">Interactive real-time dashboards, executive-ready summaries</p>
+          </article>
+        </div>
+        <div class="spine-progress" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Solutions: selectable list, keyboard navigable. -->
+  <section class="paper solutions section-pad" id="solutions" aria-labelledby="sol-h">
+    <div class="wrap">
+      <h2 id="sol-h">What business problem are you trying to solve?</h2>
+      <p class="lede">Choose the closest match. Each one is a custom quantitative study built on the same four steps; what changes is the questionnaire design and what you receive at the end.</p>
+      <div class="grid">
+        <div class="sol-list" role="tablist" aria-orientation="vertical" aria-label="Research solutions">
+          <button role="tab" id="tab-innovation" aria-controls="panel-innovation" aria-selected="true" tabindex="0">Product innovation</button>
+          <button role="tab" id="tab-custom" aria-controls="panel-custom" aria-selected="false" tabindex="-1">Custom surveys</button>
+          <button role="tab" id="tab-pricing" aria-controls="panel-pricing" aria-selected="false" tabindex="-1">Pricing studies</button>
+          <button role="tab" id="tab-segmentation" aria-controls="panel-segmentation" aria-selected="false" tabindex="-1">Customer segmentation</button>
+          <button role="tab" id="tab-portfolio" aria-controls="panel-portfolio" aria-selected="false" tabindex="-1">Portfolio optimisation</button>
+          <button role="tab" id="tab-brand" aria-controls="panel-brand" aria-selected="false" tabindex="-1">Brand equity trackers</button>
+        </div>
+        <div class="sol-panels">
+          <div class="sol-panel" role="tabpanel" id="panel-innovation" aria-labelledby="tab-innovation" tabindex="0">
+            <h3>Which concept should go forward, and why?</h3>
+            <dl>
+              <dt>Method</dt>
+              <dd><p>Concepts are shown to a profiled sample of your target buyers in a custom survey. Closed questions measure appeal, relevance and purchase intent for each concept; GenAI-powered open-ends probe the reasons behind each score so you learn what to change, not only what to keep.</p></dd>
+              <dt>Typical deliverable</dt>
+              <dd><p>A KPI scorecard ranking concepts by segment, with coded open-end themes and an executive-ready summary of the recommendation.</p></dd>
+            </dl>
+          </div>
+          <div class="sol-panel" role="tabpanel" id="panel-custom" aria-labelledby="tab-custom" tabindex="0" hidden>
+            <h3>A question nobody has a template for.</h3>
+            <dl>
+              <dt>Method</dt>
+              <dd><p>We design the questionnaire around the decision you need to make, script and program it on Qualtrics, Decipher or SurveyMonkey, and recruit respondents to the profile the decision requires. Every study is fielded with the data-quality checks described further down this page.</p></dd>
+              <dt>Typical deliverable</dt>
+              <dd><p>Cleaned data with coded open-ends, cross-tabulations across the segments you specify, and an interactive dashboard your team can keep interrogating.</p></dd>
+            </dl>
+          </div>
+          <div class="sol-panel" role="tabpanel" id="panel-pricing" aria-labelledby="tab-pricing" tabindex="0" hidden>
+            <h3>What will the market bear?</h3>
+            <dl>
+              <dt>Method</dt>
+              <dd><p>Price-sensitivity and willingness-to-pay questions are built into a custom survey and fielded to a profiled sample of buyers. Results are cross-tabulated by segment so you see where the acceptable range moves and for whom.</p></dd>
+              <dt>Typical deliverable</dt>
+              <dd><p>A price-range readout by segment, presented as a scorecard and an executive-ready summary that states the recommended position and the evidence for it.</p></dd>
+            </dl>
+          </div>
+          <div class="sol-panel" role="tabpanel" id="panel-segmentation" aria-labelledby="tab-segmentation" tabindex="0" hidden>
+            <h3>Who are the groups inside your market?</h3>
+            <dl>
+              <dt>Method</dt>
+              <dd><p>A custom survey captures attitudes, needs and behaviours across a broad profiled sample. AI-driven analytics group respondents into distinct segments; open-end coding gives each segment a voice in its own words.</p></dd>
+              <dt>Typical deliverable</dt>
+              <dd><p>Segment profiles with size, defining attributes and verbatim evidence, plus a dashboard for cutting every later question by segment.</p></dd>
+            </dl>
+          </div>
+          <div class="sol-panel" role="tabpanel" id="panel-portfolio" aria-labelledby="tab-portfolio" tabindex="0" hidden>
+            <h3>Which products earn their place in the range?</h3>
+            <dl>
+              <dt>Method</dt>
+              <dd><p>Respondents evaluate the current and candidate line-up in a custom survey so that overlap, gaps and substitution between products can be measured rather than assumed. Cross-tabulation shows how the picture differs by buyer segment.</p></dd>
+              <dt>Typical deliverable</dt>
+              <dd><p>A portfolio readout identifying what to keep, merge, add or retire, with the supporting cross-tabs and an executive-ready summary.</p></dd>
+            </dl>
+          </div>
+          <div class="sol-panel" role="tabpanel" id="panel-brand" aria-labelledby="tab-brand" tabindex="0" hidden>
+            <h3>Is the brand getting stronger or weaker, and where?</h3>
+            <dl>
+              <dt>Method</dt>
+              <dd><p>A consistent questionnaire is fielded in repeated waves to comparable profiled samples, measuring awareness, consideration, preference and the associations behind them. Open-ends are coded each wave so shifts in perception are explained, not only counted.</p></dd>
+              <dt>Typical deliverable</dt>
+              <dd><p>An interactive real-time dashboard of brand KPIs by wave and segment, with a summary of what moved and why after each wave.</p></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Data quality: plain, specific, unglamorous. -->
+  <section class="paper quality section-pad section-rule" id="quality" aria-labelledby="q-h">
+    <div class="wrap">
+      <h2 id="q-h">How we protect data quality</h2>
+      <p class="lede">A finding is only as good as the respondents behind it. These are the checks that run on every study before a number reaches a slide.</p>
+      <dl>
+        <div class="row">
+          <dt>Sampling</dt>
+          <dd><p>Respondents are recruited through panel providers against a profile written for the study: the attributes that define your buyer, self-reported by the respondent, with quotas that keep the sample balanced on the dimensions the analysis will cut by.</p></dd>
+        </div>
+        <div class="row">
+          <dt>Speeder removal</dt>
+          <dd><p>A respondent who finishes far faster than the questionnaire can be read has not answered it. Completion times are compared against the study's expected length and speeders are removed before analysis.</p></dd>
+        </div>
+        <div class="row">
+          <dt>Straightliner removal</dt>
+          <dd><p>Grid questions are checked for respondents who choose the same answer down a whole column regardless of the question. Those patterns are flagged and removed rather than left to flatten the results.</p></dd>
+        </div>
+        <div class="row">
+          <dt>Attention checks</dt>
+          <dd><p>Questions with a single correct answer are placed inside the survey. Failing them means the rest of a respondent's answers are not used.</p></dd>
+        </div>
+        <div class="row">
+          <dt>Open-end coding</dt>
+          <dd><p>Free-text answers are coded into a defined set of themes so that a thousand sentences become quantities that can be cross-tabulated. Nonsense, duplicated and off-topic text is caught here as well.</p><p>Cleaned data, and the counts of what was removed at each step, are available with every study.</p></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 6. One case study. Slots are marked for Prescient to fill;
+          nothing here is invented. -->
+  <section class="paper study section-pad section-rule" id="study" aria-labelledby="study-h">
+    <div class="wrap">
+      <h2 id="study-h">One study, start to finish</h2>
+      <p class="lede">Challenge, method, and the single number that changed a decision.</p>
+      <div class="cols">
+        <div class="col">
+          <h3>Challenge</h3>
+          <p>A <span class="slot">[sector]</span> client had to decide <span class="slot">[the decision, in one sentence]</span> and had <span class="slot">[what they had instead of evidence]</span>.</p>
+        </div>
+        <div class="col">
+          <h3>Method</h3>
+          <p><span class="slot">[n]</span> respondents profiled on <span class="slot">[attributes]</span> across <span class="slot">[markets]</span>, a custom survey programmed on <span class="slot">[platform]</span>, open-ends coded into <span class="slot">[k]</span> themes, results cut by <span class="slot">[segments]</span>.</p>
+        </div>
+        <div class="col result">
+          <h3>Result</h3>
+          <strong><span class="slot">[00%]</span></strong>
+          <p><span class="slot">[what the number measured, and what the client did because of it]</span></p>
+        </div>
+      </div>
+      <blockquote>
+        <p>“<span class="slot">[One respondent verbatim, taken from an open-end, that made the finding concrete.]</span>”</p>
+        <footer>Respondent, <span class="slot">[segment]</span></footer>
+      </blockquote>
+      <p class="note">Dashed text marks content to be supplied from a real study. This page does not invent a client, a figure or a quote.</p>
+    </div>
+  </section>
+
+  <!-- 7. Industries: three, with substance. -->
+  <section class="paper industries section-pad section-rule" id="industries" aria-labelledby="ind-h">
+    <div class="wrap">
+      <h2 id="ind-h">Industries</h2>
+      <p class="lede">Three sectors where the questions are hard enough to need a custom instrument.</p>
+      <div class="cols">
+        <div>
+          <h3>Medical devices and pharmaceuticals</h3>
+          <p>Decisions here run through clinicians, patients, payers and procurement, each with a different definition of value. Surveys are profiled to the specific role in the pathway, and open-ends are coded so that clinical language becomes comparable data.</p>
+          <ul>
+            <li>Which features drive device preference among the clinicians who choose it?</li>
+            <li>How do patients weigh a treatment's burden against its benefit?</li>
+            <li>What message earns a product a place on a formulary discussion?</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Consumer packaged goods</h3>
+          <p>Range, price and pack decisions are made often and reversed expensively. Profiled shopper samples, fast fielding and segment-level cross-tabs turn a launch debate into a measured choice.</p>
+          <ul>
+            <li>Which of three concepts should reach the shelf, and for which shopper?</li>
+            <li>Where does the price point move from acceptable to expensive?</li>
+            <li>Which products in the range compete with each other rather than with rivals?</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Residential and commercial real estate</h3>
+          <p>Developers and operators commit capital years before the buyer or tenant arrives. Surveys profiled on location, tenure and budget test demand, amenities and positioning before the ground is broken.</p>
+          <ul>
+            <li>What will prospective tenants in this market pay, and for which amenities?</li>
+            <li>How do buyers rank location, layout and price when they trade one off against another?</li>
+            <li>Which positioning does a mixed-use scheme need for each audience it serves?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Trust layer. -->
+  <section class="paper trust section-pad section-rule" id="trust" aria-labelledby="trust-h">
+    <div class="wrap">
+      <h2 id="trust-h">What you can check before you call</h2>
+      <div class="cols">
+        <div>
+          <h3>Independent reviews</h3>
+          <p class="big">31 verified reviews on Clutch</p>
+          <p>Every review on Clutch is verified by Clutch's analysts with the client who commissioned the work. Read them before you brief us.</p>
+        </div>
+        <div>
+          <h3>Survey platforms</h3>
+          <p class="big">Qualtrics, Decipher, SurveyMonkey</p>
+          <p>Studies are scripted and programmed on the platform that fits the study's logic and your organisation's existing tooling.</p>
+        </div>
+        <div>
+          <h3>Sample</h3>
+          <p>Respondents are recruited through established panel providers, profiled on self-reported attributes, in markets around the world. 1.5M+ respondents have been surveyed to date across 350+ completed projects.</p>
+        </div>
+        <div>
+          <h3>Data handling and support</h3>
+          <p>Speeders, straightliners and failed attention checks are removed from every dataset before analysis, and removal counts are reported with the study.</p>
+          <p><span class="slot">[Statement on respondent consent, personal-data handling and retention, to be supplied and confirmed by Prescient.]</span></p>
+          <p>Client support is available 24/7 for the life of the study.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Contact: a real form, particle state 6 behind. -->
+  <section class="contact" id="contact" aria-labelledby="contact-h">
+    <div class="stage">
+      <div class="wrap">
+        <div class="grid">
+          <div>
+            <h2 id="contact-h">Brief us on your problem</h2>
+            <p class="lede">Tell us the decision you are trying to make. We reply with a proposed approach and a time for a briefing call, not a brochure.</p>
+            <address>Prescient Global Insights<br>Miami, FL</address>
+          </div>
+          <form id="brief-form" novalidate data-endpoint="">
+            <div class="field">
+              <label for="f-name">Name</label>
+              <input id="f-name" name="name" type="text" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="f-company">Company</label>
+              <input id="f-company" name="company" type="text" autocomplete="organization" required>
+            </div>
+            <div class="field">
+              <label for="f-email">Work email</label>
+              <input id="f-email" name="email" type="email" autocomplete="email" required>
+            </div>
+            <div class="field">
+              <label for="f-question">The business question you are trying to answer</label>
+              <textarea id="f-question" name="question" required></textarea>
+            </div>
+            <button class="btn" type="submit">Request a briefing call</button>
+            <p class="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <span>Prescient Global Insights</span>
+      <span>Miami, FL</span>
+      <span>Concept prototype</span>
+    </div>
+  </footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ==================================================================
+   Configuration
+   ================================================================== */
+var LOGO_MASK_SRC = '';            // URL of the logo mark (PNG with alpha). Empty = sample the wordmark.
+var DESKTOP_COUNT = 60000;
+var MOBILE_COUNT  = 12000;
+var MOBILE_MAX_W  = 760;
+
+/* ==================================================================
+   Interface behaviour that does not depend on WebGL
+   ================================================================== */
+
+// Solutions tablist: click, arrow keys, Home/End.
+(function tabs(){
+  var list = document.querySelector('.sol-list');
+  if(!list) return;
+  var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'));
+  var panels = tabs.map(function(t){ return document.getElementById(t.getAttribute('aria-controls')); });
+  function select(i, focus){
+    tabs.forEach(function(t, j){
+      var on = j === i;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      panels[j].hidden = !on;
+    });
+    if(focus) tabs[i].focus();
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener('click', function(){ select(i, false); });
+    t.addEventListener('keydown', function(e){
+      var n = null;
+      if(e.key === 'ArrowDown' || e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+      else if(e.key === 'ArrowUp' || e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+      else if(e.key === 'Home') n = 0;
+      else if(e.key === 'End') n = tabs.length - 1;
+      if(n !== null){ e.preventDefault(); select(n, true); }
+    });
+  });
+})();
+
+// Contact form: posts to data-endpoint when one is configured.
+(function form(){
+  var f = document.getElementById('brief-form');
+  if(!f) return;
+  var status = f.querySelector('.form-status');
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var missing = Array.prototype.filter.call(f.querySelectorAll('[required]'), function(el){ return !el.value.trim(); });
+    var email = f.querySelector('#f-email');
+    if(missing.length){ status.textContent = 'Please complete every field.'; missing[0].focus(); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)){ status.textContent = 'That email address does not look right.'; email.focus(); return; }
+    var endpoint = f.getAttribute('data-endpoint');
+    if(!endpoint){
+      status.textContent = 'Prototype: no form endpoint is connected yet. Set data-endpoint on the form to a service such as Formspree or your CRM.';
+      return;
+    }
+    status.textContent = 'Sending…';
+    var data = {};
+    Array.prototype.forEach.call(f.elements, function(el){ if(el.name) data[el.name] = el.value; });
+    fetch(endpoint, { method:'POST', headers:{ 'Content-Type':'application/json', 'Accept':'application/json' }, body: JSON.stringify(data) })
+      .then(function(r){ if(!r.ok) throw new Error(r.status); status.textContent = 'Thank you. We will reply with a proposed approach and a time to talk.'; f.reset(); })
+      .catch(function(){ status.textContent = 'That did not send. Please try again or email us directly.'; });
+  });
+})();
+
+// Close the mobile menu after choosing a link.
+(function menu(){
+  var d = document.querySelector('details.menu');
+  if(!d) return;
+  d.addEventListener('click', function(e){ if(e.target.closest('a')) d.removeAttribute('open'); });
+})();
+
+/* ==================================================================
+   Signal: the particle system
+   ================================================================== */
+var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var spine = document.getElementById('process');
+var contact = document.getElementById('contact');
+var steps = Array.prototype.slice.call(document.querySelectorAll('.step'));
+var progressBars = Array.prototype.slice.call(document.querySelectorAll('.spine-progress i'));
+
+function useStatic(){
+  document.documentElement.classList.add('no-signal');
+  steps.forEach(function(s){ s.classList.add('is-active'); });
+}
+
+function webglAvailable(){
+  try{
+    var c = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl')));
+  }catch(e){ return false; }
+}
+
+if(reduceMotion || !window.THREE || !webglAvailable()){
+  useStatic();
+  return;
+}
+
+var isMobile = window.innerWidth <= MOBILE_MAX_W;
+var COUNT = isMobile ? MOBILE_COUNT : DESKTOP_COUNT;
+
+// Brand hues, read from the stylesheet so a token edit flows through.
+var css = getComputedStyle(document.documentElement);
+function tok(name, fallback){ var v = css.getPropertyValue(name).trim(); return v || fallback; }
+var VIOLET = new THREE.Color(tok('--violet', '#5B2D91'));
+var SIGNAL = new THREE.Color(tok('--signal', '#F5811E'));
+var LILAC  = new THREE.Color(tok('--lilac',  '#C9B8E8'));
+var COOL   = new THREE.Color(0.86, 0.88, 1.0);
+
+// Five hues along the purple-orange axis for clusters and bars.
+function ramp(n){
+  var out = [];
+  var a = VIOLET.clone().lerp(LILAC, 0.55);
+  for(var i = 0; i < n; i++){ out.push(a.clone().lerp(SIGNAL, i / (n - 1))); }
+  return out;
+}
+var RAMP = ramp(5);
+var BAR_HEIGHTS = [0.52, 0.78, 1.0, 0.66, 0.42];   // relative; bar 2 is the tallest and turns orange
+var TALLEST = 2;
+
+/* ---------- Random helpers ---------- */
+var seed = 1234567;
+function rnd(){ seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+function gauss(){ var u = 1 - rnd(), v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+/* ---------- Target position buffers ---------- */
+var pos = [];
+for(var s = 0; s < 6; s++) pos.push(new Float32Array(COUNT * 3));
+var meta = new Float32Array(COUNT * 4);    // seed, selected, cluster, bar
+var col5 = new Float32Array(COUNT * 3);    // colour in the logo state
+
+function set(buf, i, x, y, z){ buf[i*3] = x; buf[i*3+1] = y; buf[i*3+2] = z; }
+
+// State 1: turbulent cloud. Wide, no shape.
+function buildCloud(){
+  for(var i = 0; i < COUNT; i++){
+    var r = Math.pow(rnd(), 0.55) * 2.6;
+    var th = rnd() * Math.PI * 2, ph = Math.acos(2 * rnd() - 1);
+    var x = r * Math.sin(ph) * Math.cos(th) * 1.5;
+    var y = r * Math.sin(ph) * Math.sin(th) * 0.85;
+    var z = r * Math.cos(ph) * 0.9;
+    set(pos[0], i, x, y, z);
+    meta[i*4] = rnd();
+  }
+}
+
+// State 2: 8% ignite and gather; the rest hold position and dim.
+function buildSample(){
+  for(var i = 0; i < COUNT; i++){
+    var sel = rnd() < 0.08 ? 1 : 0;
+    meta[i*4+1] = sel;
+    if(sel){
+      set(pos[1], i, gauss() * 0.42 + 0.1, gauss() * 0.42 + 0.05, gauss() * 0.42);
+    }else{
+      set(pos[1], i, pos[0][i*3] * 1.12, pos[0][i*3+1] * 1.12, pos[0][i*3+2] * 1.12);
+    }
+  }
+}
+
+// State 3: rows and columns on a plane, receding in perspective.
+function buildGrid(){
+  var per = Math.max(1, Math.round(COUNT / 6000));
+  var cells = Math.ceil(COUNT / per);
+  var cols = Math.round(Math.sqrt(cells * 2.4));
+  var rows = Math.ceil(cells / cols);
+  var w = 4.6, h = 3.2;
+  var tilt = -0.95;                                    // radians about x
+  var ct = Math.cos(tilt), st = Math.sin(tilt);
+  for(var i = 0; i < COUNT; i++){
+    var c = Math.floor(i / per);
+    var cx = c % cols, cy = Math.floor(c / cols);
+    var x = (cx / (cols - 1) - 0.5) * w;
+    var yy = (cy / (rows - 1) - 0.5) * h;
+    var jx = (rnd() - 0.5) * 0.012, jy = (rnd() - 0.5) * 0.012;
+    var y = yy * ct, z = yy * st;
+    set(pos[2], i, x + jx, y + jy + 0.1, z + 0.4);
+  }
+}
+
+// State 4: five clusters, separated in depth.
+function buildClusters(){
+  var centres = [
+    [-1.7,  0.8,  0.6],
+    [-0.4, -0.9, -0.8],
+    [ 0.5,  0.9, -1.4],
+    [ 1.6, -0.3,  0.9],
+    [ 0.1,  0.1,  0.1]
+  ];
+  var sig = [0.38, 0.32, 0.42, 0.35, 0.28];
+  for(var i = 0; i < COUNT; i++){
+    var k = i % 5;
+    meta[i*4+2] = k;
+    var c = centres[k], sg = sig[k];
+    set(pos[3], i, c[0] + gauss() * sg * 1.2, c[1] + gauss() * sg, c[2] + gauss() * sg);
+  }
+}
+
+// State 5: a bar chart, points filling five volumes in proportion.
+function buildChart(){
+  var bw = 0.5, gap = 0.28, depth = 0.34, maxH = 2.5;
+  var totalW = 5 * bw + 4 * gap;
+  var x0 = -totalW / 2 + bw / 2;
+  var base = -1.25;
+  var vol = BAR_HEIGHTS.map(function(h){ return h; });
+  var sum = vol.reduce(function(a, b){ return a + b; }, 0);
+  var cum = [], acc = 0;
+  for(var b = 0; b < 5; b++){ acc += vol[b] / sum; cum.push(acc); }
+  for(var i = 0; i < COUNT; i++){
+    var u = rnd(), bar = 0;
+    while(bar < 4 && u > cum[bar]) bar++;
+    meta[i*4+3] = bar;
+    var hgt = BAR_HEIGHTS[bar] * maxH;
+    var x = x0 + bar * (bw + gap) + (rnd() - 0.5) * bw;
+    var y = base + rnd() * hgt;
+    var z = (rnd() - 0.5) * depth;
+    // bias toward the faces so the edges read crisp
+    if(rnd() < 0.35){ z = (rnd() < 0.5 ? -1 : 1) * depth / 2 * (0.9 + rnd() * 0.1); }
+    set(pos[4], i, x, y, z);
+  }
+}
+
+// State 6: sampled from an offscreen canvas. Image if provided, else the wordmark.
+function buildLogo(done){
+  var W = 640, H = 240;
+  var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  var ctx = cv.getContext('2d', { willReadFrequently: true });
+
+  function sample(){
+    var img = ctx.getImageData(0, 0, W, H).data;
+    var pts = [], colours = [];
+    for(var y = 0; y < H; y += 1){
+      for(var x = 0; x < W; x += 1){
+        var a = img[(y * W + x) * 4 + 3];
+        if(a > 90){ pts.push(x, y); colours.push(img[(y*W+x)*4], img[(y*W+x)*4+1], img[(y*W+x)*4+2]); }
+      }
+    }
+    var n = pts.length / 2;
+    var scale = 3.4 / W;
+    for(var i = 0; i < COUNT; i++){
+      if(n === 0){ set(pos[5], i, pos[4][i*3], pos[4][i*3+1], pos[4][i*3+2]); col5[i*3] = 1; col5[i*3+1] = 1; col5[i*3+2] = 1; continue; }
+      var k = Math.floor(rnd() * n);
+      var px = pts[k*2] + rnd(), py = pts[k*2+1] + rnd();
+      set(pos[5], i, (px - W/2) * scale, -(py - H/2) * scale, (rnd() - 0.5) * 0.12);
+      col5[i*3] = colours[k*3] / 255; col5[i*3+1] = colours[k*3+1] / 255; col5[i*3+2] = colours[k*3+2] / 255;
+    }
+    done();
+  }
+
+  function drawWordmark(){
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#F2ECFF';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = '600 118px Archivo, system-ui, sans-serif';
+    ctx.fillText('Prescient', W/2, H/2 - 6);
+    // one orange counter, the way the brand pairs the two colours
+    var m = ctx.measureText('Prescient');
+    ctx.fillStyle = '#' + SIGNAL.getHexString();
+    ctx.beginPath(); ctx.arc(W/2 + m.width/2 + 26, H/2 - 40, 11, 0, Math.PI * 2); ctx.fill();
+    sample();
+  }
+
+  if(LOGO_MASK_SRC){
+    var im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = function(){
+      var r = Math.min((W - 40) / im.width, (H - 40) / im.height);
+      var dw = im.width * r, dh = im.height * r;
+      ctx.clearRect(0, 0, W, H);
+      ctx.drawImage(im, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      try{ sample(); }catch(e){ drawWordmark(); }
+    };
+    im.onerror = drawWordmark;
+    im.src = LOGO_MASK_SRC;
+  }else{
+    var ready = (document.fonts && document.fonts.load) ? document.fonts.load('600 118px Archivo') : Promise.resolve();
+    ready.then(drawWordmark, drawWordmark);
+  }
+}
+
+buildCloud(); buildSample(); buildGrid(); buildClusters(); buildChart();
+
+// Mobile runs three states: cloud, sample, chart. Alias the buffers so the
+// sequential mix in the shader passes through nothing else.
+if(isMobile){
+  pos[2] = pos[1];
+  pos[3] = pos[4];
+  pos[5] = pos[4];
+}
+
+/* ---------- Three.js scene ---------- */
+var mount = document.getElementById('signal');
+var renderer;
+try{
+  renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
+}catch(e){ useStatic(); return; }
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x000000, 0);
+mount.appendChild(renderer.domElement);
+
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 9);
+
+var geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(pos[0], 3));
+geo.setAttribute('p1', new THREE.BufferAttribute(pos[1], 3));
+geo.setAttribute('p2', new THREE.BufferAttribute(pos[2], 3));
+geo.setAttribute('p3', new THREE.BufferAttribute(pos[3], 3));
+geo.setAttribute('p4', new THREE.BufferAttribute(pos[4], 3));
+var p5attr = new THREE.BufferAttribute(pos[5], 3);
+geo.setAttribute('p5', p5attr);
+geo.setAttribute('meta', new THREE.BufferAttribute(meta, 4));
+var c5attr = new THREE.BufferAttribute(col5, 3);
+geo.setAttribute('c5', c5attr);
+geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 20);
+
+var uniforms = {
+  uState:  { value: 0 },
+  uTime:   { value: 0 },
+  uSize:   { value: isMobile ? 2.6 : 2.2 },
+  uPixel:  { value: renderer.getPixelRatio() },
+  uShiftX: { value: 0 },
+  uShiftY: { value: 0 },
+  uShift5: { value: new THREE.Vector2(0, 0) },
+  uScale:  { value: 1 },
+  uMobile: { value: isMobile ? 1 : 0 },
+  uCool:   { value: COOL },
+  uLilac:  { value: LILAC },
+  uSignal: { value: SIGNAL },
+  uRamp:   { value: RAMP },
+  uTallest:{ value: TALLEST },
+  uLogoReady: { value: 0 }
+};
+
+var vert = [
+'precision highp float;',
+'attribute vec3 p1; attribute vec3 p2; attribute vec3 p3; attribute vec3 p4; attribute vec3 p5;',
+'attribute vec4 meta; attribute vec3 c5;',
+'uniform float uState, uTime, uSize, uPixel, uShiftX, uShiftY, uScale, uMobile, uLogoReady; uniform vec2 uShift5;',
+'uniform vec3 uCool, uLilac, uSignal; uniform vec3 uRamp[5]; uniform float uTallest;',
+'varying vec3 vCol; varying float vAlpha;',
+
+// Simplex noise (Ashima Arts / Stefan Gustavson, MIT).
+'vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}',
+'vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}',
+'vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}',
+'vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}',
+'float snoise(vec3 v){',
+'  const vec2 C=vec2(1.0/6.0,1.0/3.0); const vec4 D=vec4(0.0,0.5,1.0,2.0);',
+'  vec3 i=floor(v+dot(v,C.yyy)); vec3 x0=v-i+dot(i,C.xxx);',
+'  vec3 g=step(x0.yzx,x0.xyz); vec3 l=1.0-g; vec3 i1=min(g.xyz,l.zxy); vec3 i2=max(g.xyz,l.zxy);',
+'  vec3 x1=x0-i1+C.xxx; vec3 x2=x0-i2+C.yyy; vec3 x3=x0-D.yyy;',
+'  i=mod289(i);',
+'  vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));',
+'  float n_=0.142857142857; vec3 ns=n_*D.wyz-D.xzx;',
+'  vec4 j=p-49.0*floor(p*ns.z*ns.z); vec4 x_=floor(j*ns.z); vec4 y_=floor(j-7.0*x_);',
+'  vec4 x=x_*ns.x+ns.yyyy; vec4 y=y_*ns.x+ns.yyyy; vec4 h=1.0-abs(x)-abs(y);',
+'  vec4 b0=vec4(x.xy,y.xy); vec4 b1=vec4(x.zw,y.zw);',
+'  vec4 s0=floor(b0)*2.0+1.0; vec4 s1=floor(b1)*2.0+1.0; vec4 sh=-step(h,vec4(0.0));',
+'  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy; vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;',
+'  vec3 p0=vec3(a0.xy,h.x); vec3 p1_=vec3(a0.zw,h.y); vec3 p2_=vec3(a1.xy,h.z); vec3 p3_=vec3(a1.zw,h.w);',
+'  vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1_,p1_),dot(p2_,p2_),dot(p3_,p3_)));',
+'  p0*=norm.x; p1_*=norm.y; p2_*=norm.z; p3_*=norm.w;',
+'  vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0); m=m*m;',
+'  return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1_,x1),dot(p2_,x2),dot(p3_,x3)));',
+'}',
+// Divergence-free drift: curl of (noise * constant axis) = grad(noise) x axis.
+'vec3 curl(vec3 p){',
+'  float e=0.12;',
+'  vec3 g=vec3(snoise(p+vec3(e,0,0))-snoise(p-vec3(e,0,0)),',
+'              snoise(p+vec3(0,e,0))-snoise(p-vec3(0,e,0)),',
+'              snoise(p+vec3(0,0,e))-snoise(p-vec3(0,0,e)))/(2.0*e);',
+'  return cross(g, normalize(vec3(0.35,1.0,0.25)));',
+'}',
+// Eased, per-particle staggered transition weight.
+'float stag(float s, float sd){ float t=clamp((s-sd*0.35)/0.65,0.0,1.0); return t*t*(3.0-2.0*t); }',
+
+'void main(){',
+'  float sd=meta.x; float sel=meta.y; int cl=int(meta.z+0.5); int bar=int(meta.w+0.5);',
+'  float s1=stag(clamp(uState,0.0,1.0),sd);',
+'  float s2=stag(clamp(uState-1.0,0.0,1.0),sd);',
+'  float s3=stag(clamp(uState-2.0,0.0,1.0),sd);',
+'  float s4=stag(clamp(uState-3.0,0.0,1.0),sd);',
+'  float s5=stag(clamp(uState-4.0,0.0,1.0),sd);',
+
+'  vec3 p=position;',
+'  p=mix(p,p1,s1); p=mix(p,p2,s2); p=mix(p,p3,s3); p=mix(p,p4,s4); p=mix(p,p5,s5);',
+
+// Flight: a small arc during every morph, an upward drift into the mark.
+'  vec3 dir=normalize(vec3(sin(sd*61.0),cos(sd*37.0),sin(sd*23.0)));',
+'  float bulge=sin(3.14159*s1)+sin(3.14159*s2)+sin(3.14159*s3)+sin(3.14159*s4);',
+'  p+=dir*bulge*0.22*(0.5+sd);',
+'  p.y+=sin(3.14159*s5)*1.4*(0.4+sd);',
+
+// Curl drift while the field is still raw opinion (states 1-2).
+'  float raw=1.0-s2;',
+'  if(raw>0.001){ p+=curl(p*0.55+vec3(0.0,uTime*0.05,uTime*0.03))*0.32*raw; }',
+// Gentle life in the settled states.
+'  p.y+=sin(uTime*0.6+sd*12.0)*0.012*s2;',
+
+'  p.x+=uShiftX*s1*(1.0-s5); p.y+=uShiftY*s1*(1.0-s5);',
+'  p.xy+=uShift5*s5;',
+'  p*=uScale;',
+
+// Colour and alpha per state.
+'  float speck=step(0.97,fract(sd*7.31));',
+'  vec3 c0=mix(uCool,uSignal,speck);            float a0=0.7+0.3*speck;',
+'  vec3 c1=mix(uLilac,uSignal,sel);             float a1=mix(0.14,1.0,sel);',
+'  vec3 c2=mix(uCool,uLilac,0.35);              float a2=0.62;',
+'  vec3 c3=uRamp[0]; if(cl==1)c3=uRamp[1]; if(cl==2)c3=uRamp[2]; if(cl==3)c3=uRamp[3]; if(cl==4)c3=uRamp[4];',
+'  float a3=0.7;',
+'  vec3 c4=mix(uLilac,uSignal,step(abs(float(bar)-uTallest),0.5)); float a4=0.55;',
+'  vec3 c5c=mix(uLilac,c5,uLogoReady);          float a5=0.75;',
+'  vec3 col=c0; float al=a0;',
+'  col=mix(col,c1,s1); al=mix(al,a1,s1);',
+'  col=mix(col,c2,s2); al=mix(al,a2,s2);',
+'  col=mix(col,c3,s3); al=mix(al,a3,s3);',
+'  col=mix(col,c4,s4); al=mix(al,a4,s4);',
+'  col=mix(col,c5c,s5); al=mix(al,a5,s5);',
+'  vCol=col; vAlpha=al;',
+
+'  vec4 mv=modelViewMatrix*vec4(p,1.0);',
+'  float size=uSize*(0.6+0.8*fract(sd*3.7))*(1.0+0.9*sel*s1*(1.0-s2))*uPixel;',
+'  gl_PointSize=size*(6.5/-mv.z);',
+'  gl_Position=projectionMatrix*mv;',
+'}'
+].join('\n');
+
+var frag = [
+'precision highp float;',
+'varying vec3 vCol; varying float vAlpha;',
+'void main(){',
+'  vec2 q=gl_PointCoord-0.5; float d=length(q);',
+'  if(d>0.5) discard;',
+'  float a=smoothstep(0.5,0.12,d)*vAlpha;',
+'  gl_FragColor=vec4(vCol*a,a);',
+'}'
+].join('\n');
+
+var mat = new THREE.ShaderMaterial({
+  uniforms: uniforms, vertexShader: vert, fragmentShader: frag,
+  transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending
+});
+var points = new THREE.Points(geo, mat);
+points.frustumCulled = false;
+scene.add(points);
+
+buildLogo(function(){
+  p5attr.needsUpdate = true;
+  c5attr.needsUpdate = true;
+  uniforms.uLogoReady.value = 1;
+});
+
+/* ---------- Scroll timeline ---------- */
+var HOLD = parseFloat(css.getPropertyValue('--spine-hold')) || 100;
+var MORPH = parseFloat(css.getPropertyValue('--spine-morph')) || 70;
+var keys = [];     // [scrollY, state]
+var spineTop = 0, contactTop = 0, vh = 1;
+
+function layout(){
+  vh = window.innerHeight;
+  spineTop = spine.offsetTop;
+  contactTop = contact.offsetTop;
+  var stepPx = (MORPH + HOLD) / 100 * vh;
+  var morphPx = MORPH / 100 * vh;
+  keys = [[0, 0], [spineTop, 0]];
+  for(var i = 0; i < 4; i++){
+    var start = spineTop + i * stepPx;
+    var target = isMobile ? [1, 2, 3, 3][i] : i + 1;   // mobile: sample, sample, chart, chart
+    keys.push([start + morphPx, target], [start + stepPx, target]);
+  }
+  var last = isMobile ? 3 : 4;
+  keys.push([contactTop - vh * 0.2, last]);
+  keys.push([contactTop + vh * 0.85, isMobile ? 3 : 5]);
+
+  var aspect = window.innerWidth / window.innerHeight;
+  uniforms.uScale.value = Math.min(1, Math.max(0.55, aspect / 1.15));
+  uniforms.uShiftX.value = isMobile ? 0 : 1.35 * Math.min(1, aspect / 1.4);
+  uniforms.uShiftY.value = isMobile ? 0.85 : 0;
+  uniforms.uShift5.value.set(isMobile ? 0 : -2.05, isMobile ? 0 : -1.55);
+}
+
+function stateAt(y){
+  if(y <= keys[0][0]) return keys[0][1];
+  for(var i = 1; i < keys.length; i++){
+    if(y <= keys[i][0]){
+      var a = keys[i-1], b = keys[i];
+      var t = (b[0] === a[0]) ? 1 : (y - a[0]) / (b[0] - a[0]);
+      return a[1] + (b[1] - a[1]) * t;
+    }
+  }
+  return keys[keys.length - 1][1];
+}
+
+var activeStep = -1;
+function updateSteps(y){
+  var stepPx = (MORPH + HOLD) / 100 * vh;
+  var local = y - spineTop;
+  var idx = Math.floor(local / stepPx);
+  var within = local - idx * stepPx;
+  if(local < 0) idx = 0;
+  if(idx > 3) idx = 3;
+  // fade the copy in halfway through its morph
+  if(local >= 0 && idx < 3 && within < MORPH / 100 * vh * 0.45 && idx > 0){ idx = idx - 1; }
+  if(idx !== activeStep){
+    activeStep = idx;
+    steps.forEach(function(s, i){ s.classList.toggle('is-active', i === idx); });
+    progressBars.forEach(function(b, i){ b.classList.toggle('on', i <= idx); });
+  }
+}
+
+var current = 0, target = 0, lastY = -1;
+var clock = new THREE.Clock();
+var running = true;
+
+function frame(){
+  if(!running) return;
+  requestAnimationFrame(frame);
+  var y = window.scrollY || window.pageYOffset;
+  if(y !== lastY){ lastY = y; target = stateAt(y); updateSteps(y); }
+  current += (target - current) * 0.1;
+  if(Math.abs(target - current) < 0.0005) current = target;
+  uniforms.uState.value = current;
+  uniforms.uTime.value = clock.getElapsedTime();
+  points.rotation.y = Math.sin(uniforms.uTime.value * 0.08) * 0.06;
+  renderer.render(scene, camera);
+}
+
+function resize(){
+  var w = window.innerWidth, h = window.innerHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  uniforms.uPixel.value = renderer.getPixelRatio();
+  layout();
+  lastY = -1;
+}
+
+window.addEventListener('resize', resize, { passive: true });
+window.addEventListener('load', function(){ layout(); lastY = -1; });
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden){ running = false; }
+  else if(!running){ running = true; clock.start(); frame(); }
+});
+renderer.domElement.addEventListener('webglcontextlost', function(e){ e.preventDefault(); running = false; useStatic(); });
+
+layout();
+frame();
+})();
+</script>
+</body>
+</html>
