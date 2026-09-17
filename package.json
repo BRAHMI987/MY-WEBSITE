@@ -1,0 +1,11 @@
+{
+  "name": "my-website",
+  "private": true,
+  "description": "Prescient Global Insights concept page and Playwright checks",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
+  }
+}

@@ -1,0 +1,3 @@
+Installed from https://github.com/pbakaus/impeccable (plugin/skills/impeccable, v0.1.5), Apache-2.0.
+Upstream commit: f2c7051853848826aac2f4646581d62a732155ad
+Hooks from plugin/hooks/hooks.json were intentionally not installed.

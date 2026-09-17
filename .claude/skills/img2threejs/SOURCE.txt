@@ -1,0 +1,3 @@
+Installed from https://github.com/img2threejs/img2threejs, Apache-2.0.
+Upstream commit: 6e60b5e22419464b4853e01ddb6c0e6f6659a733
+The forge/ pipeline needs Python packages from forge/requirements.txt.

@@ -106,6 +106,7 @@ section{position:relative}
   border:1px solid transparent;line-height:1.2
 }
 .btn:hover{background:#FF9640}
+.btn:disabled{opacity:.6;cursor:progress}
 .btn.small{padding:.55rem .95rem;font-size:.9rem}
 .menu{display:none}
 @media (max-width:760px){
@@ -755,12 +756,17 @@ var MOBILE_MAX_W  = 760;
       status.textContent = 'Prototype: no form endpoint is connected yet. Set data-endpoint on the form to a service such as Formspree or your CRM.';
       return;
     }
+    if(f.dataset.busy) return;                       // one request at a time
+    f.dataset.busy = '1';
+    var button = f.querySelector('button[type="submit"]');
+    button.disabled = true;
     status.textContent = 'Sending…';
     var data = {};
     Array.prototype.forEach.call(f.elements, function(el){ if(el.name) data[el.name] = el.value; });
     fetch(endpoint, { method:'POST', headers:{ 'Content-Type':'application/json', 'Accept':'application/json' }, body: JSON.stringify(data) })
       .then(function(r){ if(!r.ok) throw new Error(r.status); status.textContent = 'Thank you. We will reply with a proposed approach and a time to talk.'; f.reset(); })
-      .catch(function(){ status.textContent = 'That did not send. Please try again or email us directly.'; });
+      .catch(function(){ status.textContent = 'That did not send. Please try again or email us directly.'; })
+      .then(function(){ delete f.dataset.busy; button.disabled = false; });
   });
 })();
 
