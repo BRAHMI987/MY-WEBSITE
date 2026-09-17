@@ -1,16 +1,19 @@
-// Checks for the briefing form on prescient-signal.html.
+// Checks for the briefing form on index.html and prescient-signal.html.
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 
-const PAGE = 'file://' + path.resolve(__dirname, '..', 'prescient-signal.html');
+const PAGES = ['index.html', 'prescient-signal.html'];
+const BUTTON = /Send the brief|Request a briefing call/;
 
+for (const file of PAGES) {
+test.describe(file, () => {
 test.beforeEach(async ({ page }) => {
-  await page.goto(PAGE);
+  await page.goto('file://' + path.resolve(__dirname, '..', file));
   await page.locator('#contact').scrollIntoViewIfNeeded();
 });
 
 test('empty submit asks for every field and focuses the first', async ({ page }) => {
-  await page.getByRole('button', { name: 'Request a briefing call' }).click();
+  await page.getByRole('button', { name: BUTTON }).click();
   await expect(page.locator('.form-status')).toHaveText('Please complete every field.');
   await expect(page.locator('#f-name')).toBeFocused();
 });
@@ -20,7 +23,7 @@ test('invalid email is rejected and focused', async ({ page }) => {
   await page.fill('#f-company', 'Example Foods');
   await page.fill('#f-email', 'not-an-email');
   await page.fill('#f-question', 'Which of three pack designs should we launch?');
-  await page.getByRole('button', { name: 'Request a briefing call' }).click();
+  await page.getByRole('button', { name: BUTTON }).click();
   await expect(page.locator('.form-status')).toHaveText('That email address does not look right.');
   await expect(page.locator('#f-email')).toBeFocused();
 });
@@ -30,7 +33,7 @@ test('valid submit without an endpoint reports the prototype state', async ({ pa
   await page.fill('#f-company', 'Example Foods');
   await page.fill('#f-email', 'ana@example.com');
   await page.fill('#f-question', 'Which of three pack designs should we launch?');
-  await page.getByRole('button', { name: 'Request a briefing call' }).click();
+  await page.getByRole('button', { name: BUTTON }).click();
   await expect(page.locator('.form-status')).toContainText('no form endpoint is connected');
 });
 
@@ -42,7 +45,7 @@ test('double submit does not send twice', async ({ page }) => {
   await page.fill('#f-company', 'Example Foods');
   await page.fill('#f-email', 'ana@example.com');
   await page.fill('#f-question', 'Which of three pack designs should we launch?');
-  const button = page.getByRole('button', { name: 'Request a briefing call' });
+  const button = page.getByRole('button', { name: BUTTON });
   await button.dblclick();
   await expect(page.locator('.form-status')).toContainText('Thank you');
   expect(posts).toBe(1);
@@ -52,7 +55,7 @@ test('very long input is accepted in every field', async ({ page }) => {
   const long = 'x'.repeat(5000);
   for (const id of ['#f-name', '#f-company', '#f-question']) await page.fill(id, long);
   await page.fill('#f-email', 'ana@example.com');
-  await page.getByRole('button', { name: 'Request a briefing call' }).click();
+  await page.getByRole('button', { name: BUTTON }).click();
   await expect(page.locator('.form-status')).toContainText('no form endpoint is connected');
 });
 
@@ -63,7 +66,9 @@ test('keyboard-only path reaches every field and the button', async ({ page }) =
     await expect(page.locator(id)).toBeFocused();
   }
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('button', { name: 'Request a briefing call' })).toBeFocused();
+  await expect(page.getByRole('button', { name: BUTTON })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.locator('.form-status')).toHaveText('Please complete every field.');
 });
+});
+}
