@@ -1,0 +1,2 @@
+Installed from https://github.com/emilkowalski/skills (skills/improve-animations), MIT licensed.
+Upstream commit: 85e8e2363b713506e1d5b6e07a0eb2da66be1bc3
